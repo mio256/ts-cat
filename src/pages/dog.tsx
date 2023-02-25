@@ -39,7 +39,7 @@ const IndexPage: NextPage<IndexPageProps> = ({ initialDogImageUrl }) => {
             きょうのおいぬ🐶
             </button>
             <div style={{ marginTop: 8 }}>
-                <img src={catImageUrl} width="auto" height="auto" />
+                <img src={dogImageUrl} width="auto" height="auto" />
             </div>
         </div>
     );
