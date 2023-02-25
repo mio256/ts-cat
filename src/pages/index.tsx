@@ -1,6 +1,17 @@
 import { useState } from "react";
 import type { NextPage, GetServerSideProps } from "next";
 
+interface SearchDogImage {
+    message: string;
+    status: string;
+}
+
+const fetchDogImage = async () => {
+    const res = await fetch("https://dog.ceo/api/breeds/image/random");
+    const result = (await res.json()) as SearchDogImage;
+    return result;
+};
+
 interface CatCategory {
     id: number;
     name: string;
@@ -24,42 +35,70 @@ const fetchCatImage = async () => {
 };
 
 interface IndexPageProps {
+    initialDogImageUrl: string;
     initialCatImageUrl: string;
 }
 
-const IndexPage: NextPage<IndexPageProps> = ({ initialCatImageUrl }) => {
+const IndexPage: NextPage<IndexPageProps> = ({ initialDogImageUrl, initialCatImageUrl }) => {
+    const [dogImageUrl, setDogImageUrl] = useState(initialDogImageUrl);
     const [catImageUrl, setCatImageUrl] = useState(initialCatImageUrl);
 
-    const handleClick = async () => {
-        const image = await fetchCatImage();
-        setCatImageUrl(image.url);
+    const handleDogClick = async () => {
+        const dog_image = await fetchDogImage();
+        setDogImageUrl(dog_image.message)
+    };
+
+    const handleCatClick = async () => {
+        const cat_image = await fetchCatImage();
+        setCatImageUrl(cat_image.url);
     };
 
     return (
         <div>
-            <button
-            onClick={handleClick}
-            style={{
-                backgroundColor: "#319795",
-                border: "none",
-                borderRadius: "4px",
-                color: "white",
-                padding: "4px 8px",
-            }}
-            >
-            きょうのにゃんこ🐱
-            </button>
-            <div style={{ marginTop: 8 }}>
-                <img src={catImageUrl} width={500} height="auto" />
+            <div>
+                <button
+                onClick={handleDogClick}
+                style={{
+                    backgroundColor: "#319795",
+                    border: "none",
+                    borderRadius: "4px",
+                    color: "white",
+                    padding: "4px 8px",
+                }}
+                >
+                きょうのおいぬ🐶
+                </button>
+                <div style={{ marginTop: 8 }}>
+                    <img src={dogImageUrl} width={500} height="auto" />
+                </div>
+            </div>
+            <div>
+                <button
+                onClick={handleCatClick}
+                style={{
+                    backgroundColor: "#319795",
+                    border: "none",
+                    borderRadius: "4px",
+                    color: "white",
+                    padding: "4px 8px",
+                }}
+                >
+                きょうのにゃんこ🐱
+                </button>
+                <div style={{ marginTop: 8 }}>
+                    <img src={catImageUrl} width={500} height="auto" />
+                </div>
             </div>
         </div>
     );
 };
 
 export const getServerSideProps: GetServerSideProps<IndexPageProps> = async () => {
+    const dogImage = await fetchDogImage();
     const catImage = await fetchCatImage();
     return {
         props: {
+            initialDogImageUrl: dogImage.message,
             initialCatImageUrl: catImage.url,
         },
     };
